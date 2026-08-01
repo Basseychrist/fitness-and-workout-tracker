@@ -1,3 +1,5 @@
+"""GUI application for managing fitness profiles and workouts with Firestore."""
+
 import datetime
 import tkinter as tk
 from tkinter import ttk, messagebox, scrolledtext
@@ -17,13 +19,17 @@ from tracker import (
 
 
 class FitnessTrackerGUI(tk.Tk):
+    """Main GUI application window for the fitness tracker."""
+
     def __init__(self):
+        """Initialize the root window and build the UI."""
         super().__init__()
         self.title("Fitness & Workout Tracker")
         self.geometry("760x620")
         self.create_widgets()
 
     def create_widgets(self):
+        """Create and arrange the main UI widgets for the app."""
         notebook = ttk.Notebook(self)
         notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
@@ -39,6 +45,7 @@ class FitnessTrackerGUI(tk.Tk):
         self.create_workout_tab()
 
     def create_profile_tab(self):
+        """Build the profile management tab UI."""
         frame = ttk.Frame(self.profile_tab)
         frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
@@ -84,6 +91,7 @@ class FitnessTrackerGUI(tk.Tk):
         self.refresh_profiles()
 
     def create_workout_tab(self):
+        """Build the workout management tab UI."""
         frame = ttk.Frame(self.workout_tab)
         frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
@@ -150,9 +158,11 @@ class FitnessTrackerGUI(tk.Tk):
         self.refresh_workouts()
 
     def set_status(self, message: str, error: bool = False):
+        """Update the status bar text and color for normal or error states."""
         self.status_label.config(text=message, fg="red" if error else "black")
 
     def create_profile_action(self):
+        """Handle create profile button clicks and persist a new profile."""
         name = self.profile_name.get().strip()
         if not name:
             messagebox.showwarning("Missing value", "Name is required.")
@@ -174,6 +184,7 @@ class FitnessTrackerGUI(tk.Tk):
             self.set_status("Failed to create profile.", error=True)
 
     def update_profile_action(self):
+        """Handle update profile button clicks and submit profile changes."""
         profile_id = self.edit_profile_id.get().strip()
         if not profile_id:
             messagebox.showwarning("Missing value", "Profile ID is required.")
@@ -211,6 +222,7 @@ class FitnessTrackerGUI(tk.Tk):
             self.set_status("Failed to update profile.", error=True)
 
     def delete_profile_action(self):
+        """Handle delete profile actions after user confirmation."""
         profile_id = self.edit_profile_id.get().strip()
         if not profile_id:
             messagebox.showwarning("Missing value", "Profile ID is required.")
@@ -226,6 +238,7 @@ class FitnessTrackerGUI(tk.Tk):
             self.set_status("Failed to delete profile.", error=True)
 
     def refresh_profiles(self):
+        """Reload the profile list from Firestore and display it in the UI."""
         self.profile_output.delete(1.0, tk.END)
         try:
             profiles = list_profiles()
@@ -240,6 +253,7 @@ class FitnessTrackerGUI(tk.Tk):
             self.set_status("Failed to refresh profiles.", error=True)
 
     def create_workout_action(self):
+        """Handle create workout button clicks and persist a new workout."""
         profile_id = self.workout_profile_id.get().strip()
         if not profile_id:
             messagebox.showwarning("Missing value", "Profile ID is required.")
@@ -265,6 +279,7 @@ class FitnessTrackerGUI(tk.Tk):
             self.set_status("Failed to create workout.", error=True)
 
     def refresh_workouts(self):
+        """Reload the workout list from Firestore and display it in the UI."""
         self.workout_output.delete(1.0, tk.END)
         try:
             filter_type = self.filter_type.get().strip() or None
@@ -281,6 +296,7 @@ class FitnessTrackerGUI(tk.Tk):
             self.set_status("Failed to refresh workouts.", error=True)
 
     def update_workout_action(self):
+        """Handle update workout button clicks and submit workout changes."""
         workout_id = self.edit_workout_id.get().strip()
         if not workout_id:
             messagebox.showwarning("Missing value", "Workout ID is required.")
@@ -312,6 +328,7 @@ class FitnessTrackerGUI(tk.Tk):
             self.set_status("Failed to update workout.", error=True)
 
     def delete_workout_action(self):
+        """Handle delete workout actions after user confirmation."""
         workout_id = self.edit_workout_id.get().strip()
         if not workout_id:
             messagebox.showwarning("Missing value", "Workout ID is required.")

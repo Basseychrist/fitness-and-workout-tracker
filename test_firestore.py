@@ -2,6 +2,14 @@ from firebase_config import db
 
 
 def test_firestore_connection():
+    """Verify that Firestore is reachable by writing and reading a test document.
+
+    Returns:
+        The contents of the test document as a dictionary.
+
+    Raises:
+        AssertionError: If the document was not successfully written and read.
+    """
     doc_ref = db.collection("test").document("connection")
     payload = {
         "status": "Connected",
@@ -16,6 +24,7 @@ def test_firestore_connection():
 
 
 def main():
+    """Run the Firestore connectivity test and print the result."""
     try:
         document = test_firestore_connection()
         print("✅ Database connection successful!")

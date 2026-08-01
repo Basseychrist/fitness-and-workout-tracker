@@ -2,6 +2,7 @@ from tracker import create_profile, create_workout, list_workouts
 
 
 def demo():
+    """Run a simple demo workflow that creates a profile, logs a workout, and lists results."""
     print("Creating demo profile...")
     pid = create_profile("Demo User", age=30, weight_kg=75.0, goals="Lose fat")
     print("Profile id:", pid)
