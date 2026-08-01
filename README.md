@@ -60,5 +60,3 @@ python sample_demo.py     # demo script
 - Add pagination and date-range filters for listing large numbers of workouts.
 - Improve the GUI (search, sorting, inline edit) and add unit tests for key functions.
 - Add exporting (CSV) and simple analytics (weekly totals, calories burned trends).
-
-
