@@ -10,7 +10,7 @@ The software is a lightweight tracker that lets users create profiles and log wo
 
 You will need a Firebase service account JSON file (place it at `firebase_key.json` or set `FIREBASE_KEY_PATH` to the path).
 
-[Software Demo Video](http://youtube.link.goes.here)
+[Software Demo Video](https://youtu.be/iER4Y_1adZI?si=VzoysRC34rNoTzRX)
 
 # Cloud Database
 
