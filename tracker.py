@@ -36,8 +36,25 @@ def list_profiles() -> List[Dict]:
     return [{"id": d.id, **d.to_dict()} for d in docs]
 
 
+def format_profile(profile: Dict) -> str:
+    created_at = profile.get("created_at")
+    created_at_text = created_at.isoformat() if created_at else "N/A"
+    return (
+        f"Profile ID: {profile.get('id')}\n"
+        f"  Name: {profile.get('name')}\n"
+        f"  Age: {profile.get('age') or 'N/A'}\n"
+        f"  Weight (kg): {profile.get('weight_kg') or 'N/A'}\n"
+        f"  Goals: {profile.get('goals') or 'N/A'}\n"
+        f"  Created: {created_at_text}\n"
+    )
+
+
 def delete_profile(profile_id: str) -> None:
     db.collection(PROFILES_COLL).document(profile_id).delete()
+
+
+def update_profile(profile_id: str, updates: Dict) -> None:
+    db.collection(PROFILES_COLL).document(profile_id).update(updates)
 
 
 def create_workout(profile_id: str, date: str, workout_type: str, duration_minutes: float, calories_burned: float) -> str:
@@ -85,6 +102,17 @@ def list_workouts(filter_type: Optional[str] = None, profile_id: Optional[str] =
     return out
 
 
+def format_workout(workout: Dict) -> str:
+    return (
+        f"Workout ID: {workout.get('id')}\n"
+        f"  Profile ID: {workout.get('profile_id') or 'N/A'}\n"
+        f"  Date: {workout.get('date') or 'N/A'}\n"
+        f"  Type: {workout.get('workout_type') or 'N/A'}\n"
+        f"  Duration: {workout.get('duration_minutes') or 'N/A'} minutes\n"
+        f"  Calories: {workout.get('calories_burned') or 'N/A'}\n"
+    )
+
+
 def update_workout(workout_id: str, updates: Dict) -> None:
     db.collection(WORKOUTS_COLL).document(workout_id).update(updates)
 
@@ -106,11 +134,13 @@ def cli_menu():
         print("\nFitness & Workout Tracker")
         print("1) Create user profile")
         print("2) List user profiles")
-        print("3) Create workout")
-        print("4) List workouts")
-        print("5) Update workout")
-        print("6) Delete workout")
-        print("7) Exit")
+        print("3) Update user profile")
+        print("4) Delete user profile")
+        print("5) Create workout")
+        print("6) List workouts")
+        print("7) Update workout")
+        print("8) Delete workout")
+        print("9) Exit")
         choice = input("Choose an option: ")
 
         if choice == "1":
@@ -125,10 +155,39 @@ def cli_menu():
 
         elif choice == "2":
             profiles = list_profiles()
+            if not profiles:
+                print("No profiles found.")
             for p in profiles:
-                print(p)
+                print(format_profile(p))
 
         elif choice == "3":
+            pid = input("Profile ID to update: ")
+            print("Enter new values (leave blank to skip):")
+            name = input("Name: ")
+            age = input("Age: ")
+            weight = input("Weight kg: ")
+            goals = input("Goals: ")
+            updates = {}
+            if name.strip():
+                updates["name"] = name
+            if age.strip():
+                updates["age"] = int(age)
+            if weight.strip():
+                updates["weight_kg"] = float(weight)
+            if goals.strip():
+                updates["goals"] = goals
+            if updates:
+                update_profile(pid, updates)
+                print("Profile updated.")
+            else:
+                print("No updates provided.")
+
+        elif choice == "4":
+            pid = input("Profile ID to delete: ")
+            delete_profile(pid)
+            print("Profile deleted.")
+
+        elif choice == "5":
             profile_id = input("Profile ID: ")
             date = input("Date (YYYY-MM-DD) or leave blank for today: ")
             if not date.strip():
@@ -139,16 +198,18 @@ def cli_menu():
             wid = create_workout(profile_id, date, wtype, duration, calories)
             print(f"Created workout id: {wid}")
 
-        elif choice == "4":
+        elif choice == "6":
             ftype = input("Filter by workout type (blank for all): ")
             pid = input("Filter by profile id (blank for all): ")
             ftype = ftype.strip() or None
             pid = pid.strip() or None
             workouts = list_workouts(ftype, pid)
+            if not workouts:
+                print("No workouts found.")
             for w in workouts:
-                print(w)
+                print(format_workout(w))
 
-        elif choice == "5":
+        elif choice == "7":
             wid = input("Workout ID to update: ")
             print("Enter new values (leave blank to skip):")
             duration = input("Duration minutes: ")
@@ -164,12 +225,12 @@ def cli_menu():
             else:
                 print("No updates provided.")
 
-        elif choice == "6":
+        elif choice == "8":
             wid = input("Workout ID to delete: ")
             delete_workout(wid)
             print("Workout deleted.")
 
-        elif choice == "7":
+        elif choice == "9":
             print("Goodbye")
             break
 
